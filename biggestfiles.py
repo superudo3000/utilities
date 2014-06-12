@@ -13,7 +13,6 @@ from heapq import heapify, heapreplace
 from itertools import islice
 from optparse import OptionParser
 import os
-from sys import argv, exit
 
 
 def get_files_info(path, pattern):
