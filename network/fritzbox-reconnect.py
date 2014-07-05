@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
- 
+
 """Instruct an AVM FRITZ!Box via UPnP_ to reconnect.
 
 This is usually realized with tools like Netcat_ or cURL_.  However, when
@@ -23,41 +23,52 @@ a minute; not counting the time needed to navigate through the web interface.
 .. _XML:    http://www.w3.org/XML/
 .. _HTTP:   http://tools.ietf.org/html/rfc2616
 
-:Copyright: 2008 Jochen Kupperschmidt
-:Date: 04-Apr-2008
+:Copyright: 2008-2014 Jochen Kupperschmidt
+:Date: 05-Jul-2014 (original release: 04-Apr-2008)
 :License: MIT
 """
 
-from __future__ import with_statement
+from __future__ import print_function
 from contextlib import closing
 import socket
 
 
 def reconnect(host='fritz.box', port=49000, debug=False):
-    # Prepare HTTP data to send.
-    http_body = '\r\n'.join((
+    """Connect to the box and submit SOAP data via HTTP."""
+    request_data = create_http_request(host, port)
+
+    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
+        s.connect((host, port))
+        s.send(request_data)
+        if debug:
+            data = s.recv(1024)
+            print('Received:', data)
+
+
+def create_http_request(host, port):
+    body = create_http_body()
+
+    return '\r\n'.join([
+        'POST /upnp/control/WANIPConn1 HTTP/1.1',
+        'Host: {0}:{1:d}'.format(host, port),
+        'SoapAction: urn:schemas-upnp-org:service:WANIPConnection:1#ForceTermination',
+        'Content-Type: text/xml; charset="utf-8"',
+        'Content-Length: {0:d}'.format(len(body)),
+        '',
+        body,
+    ])
+
+
+def create_http_body():
+    return '\r\n'.join([
         '<?xml version="1.0" encoding="utf-8"?>',
         '<s:Envelope s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">',
         '  <s:Body>',
         '    <u:ForceTermination xmlns:u="urn:schemas-upnp-org:service:WANIPConnection:1"/>',
         '  </s:Body>',
-        '</s:Envelope>'))
-    http_data = '\r\n'.join((
-        'POST /upnp/control/WANIPConn1 HTTP/1.1',
-        'Host: %s:%d' % (host, port),
-        'SoapAction: urn:schemas-upnp-org:service:WANIPConnection:1#ForceTermination',
-        'Content-Type: text/xml; charset="utf-8"',
-        'Content-Length: %d' % len(http_body),
-        '',
-        http_body))
+        '</s:Envelope>',
+    ])
 
-    # Connect to the box and submit SOAP data via HTTP.
-    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
-        s.connect((host, port))
-        s.send(http_data)
-        if debug:
-            data = s.recv(1024)
-            print 'Received:', data
 
 if __name__ == '__main__':
     reconnect()
