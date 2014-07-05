@@ -37,6 +37,7 @@ def extract_contacts(filename):
                'name': item.get('name', u''),
                'group': item.findtext('{%s}group' % ROSTER_NAMESPACE)}
 
+
 def group_contacts(contacts):
     """Group contacts by roster group name."""
     groups = defaultdict(list)
@@ -44,10 +45,12 @@ def group_contacts(contacts):
         groups[contact['group']].append(contact)
     return dict(groups)
 
+
 def format_contacts(contacts):
     """Format contacts as JID and name."""
     for contact in contacts:
         yield u'%(jid)-30s  %(name)s' % contact
+
 
 def format_contacts_grouped(contacts):
     """Separate contacts by roster groups."""
@@ -58,20 +61,31 @@ def format_contacts_grouped(contacts):
             yield contact
 
 
-if __name__ == '__main__':
-    # Create parser.
-    parser = OptionParser(
-        usage='usage: %prog [options] <filename>')
-    parser.add_option('-g', '--group', dest='group',
-        action='store_true', help='list contacts by groups')
-    parser.add_option('-j', '--jids-only', dest='jids_only',
-        action='store_true', help='only show JIDs (overrides `-g`)')
+def parse_args():
+    parser = OptionParser(usage='usage: %prog [options] <filename>')
 
-    # Parse input.
+    parser.add_option(
+        '-g', '--group',
+        dest='group',
+        action='store_true',
+        help='list contacts by groups')
+
+    parser.add_option(
+        '-j', '--jids-only',
+        dest='jids_only',
+        action='store_true',
+        help='only show JIDs (overrides `-g`)')
+
     opts, args = parser.parse_args()
     if not args:
         parser.print_help()
         parser.exit()
+
+    return opts, args
+
+
+if __name__ == '__main__':
+    opts, args = parse_args()
 
     # Process xdb data and print result.
     contacts = extract_contacts(args[0])
