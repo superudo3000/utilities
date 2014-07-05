@@ -37,6 +37,7 @@ import Tkinter as tk
 
 # Load, handle and store users and groups.
 
+
 def load_groups(filename):
     """Load groups and their members from file."""
     with open(filename, 'rb') as f:
@@ -44,15 +45,18 @@ def load_groups(filename):
             group, users = line.split(':', 1)
             yield group, frozenset(users.split())
 
+
 def load_users(filename):
     """Load users from file."""
     with open(filename, 'rb') as f:
         for line in f:
             yield line.split(':', 1)[0]
 
+
 def get_groups_users(groups):
     """Return the set of users that are group members."""
     return set(chain(*(members for group, members in groups)))
+
 
 def save_groups(filename, groups):
     """Write groups and their member associations to file."""
@@ -62,6 +66,7 @@ def save_groups(filename, groups):
 
 
 # Tkinter GUI
+
 
 class GUI(tk.Tk):
     """Graphical frontend."""
@@ -105,9 +110,10 @@ def main(groups_filename, users_filename=None):
         users.update(load_users(users_filename))
     GUI(users, groups, groups_filename).mainloop()
 
+
 if __name__ == '__main__':
     if len(sys.argv) not in (2, 3):
         print('usage: %s <groups file> [users file]'
-            % os.path.basename(sys.argv[0]))
+              % os.path.basename(sys.argv[0]))
 
     main(*sys.argv[1:])
