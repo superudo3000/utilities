@@ -9,39 +9,44 @@
 """
 
 from argparse import ArgumentParser
+from collections import namedtuple
 from glob import iglob
 from heapq import heapify, heapreplace
 from itertools import islice
 import os
 
 
-def get_files_info(path, pattern):
-    """Yield the size and name of each file along the path."""
+FileInfo = namedtuple('FileInfo', ['filename', 'size'])
+
+
+def get_file_infos(path, pattern):
+    """Yield information on each file along the path."""
     for root, dirs, files in os.walk(path):
         for filename in iglob(os.path.join(root, pattern)):
-            yield int(os.path.getsize(filename)), filename
+            size = os.path.getsize(filename)
+            yield FileInfo(filename, size)
 
 
-def identify_biggest_files(files, limit):
+def identify_biggest_files(file_infos, limit):
     """Determine the biggest files.
 
     ``files``
-        An iterable of ``(size, filename)`` tuples.
+        An iterable of ``FileInfo`` instances.
     ``limit``
-        The maximum number of files to keep on the heap.  A lower value
-        might result in slightly less memory usage.
+        The maximum number of files to keep on the heap.  A lower
+        value might result in slightly lower memory usage.
     """
     # Create the initial heap.
-    biggest = list(islice(files, limit))
+    biggest = list(islice(file_infos, limit))
     heapify(biggest)
 
     # Process remaining items.
-    for file_tuple in files:
-        if file_tuple > biggest[0]:
-            heapreplace(biggest, file_tuple)
+    for file_info in file_infos:
+        if file_info.size > biggest[0].size:
+            heapreplace(biggest, file_info)
 
     # Sort and return the heap items.
-    biggest.sort(reverse=True)
+    biggest.sort(key=lambda file_info: file_info.size, reverse=True)
     return list(biggest)
 
 
@@ -72,14 +77,16 @@ def parse_args():
 
 def main():
     args = parse_args()
-    files = get_files_info(args.path, args.pattern)
-    biggest_files = identify_biggest_files(files, args.max_files)
+
+    file_infos = get_file_infos(args.path, args.pattern)
+    biggest_files = identify_biggest_files(file_infos,
+                                           args.max_files)
 
     # Display biggest files.
     if biggest_files:
-        tmpl = ' %%%dd  %%s' % len(str(biggest_files[0][0]))
-        for file_tuple in biggest_files:
-            print tmpl % file_tuple
+        tmpl = ' %%%dd  %%s' % len(str(biggest_files[0].size))
+        for file_info in biggest_files:
+            print tmpl % (file_info.size, file_info.filename)
     else:
         print 'No files were found.'
 
