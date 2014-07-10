@@ -75,9 +75,10 @@ def main():
 
     # Display biggest files.
     if biggest_files:
-        tmpl = ' %%%dd  %%s' % len(str(biggest_files[0].size))
+        highest_size_digits = len(str(biggest_files[0].size))
+        tmpl = ' {{0.size:>{}d}}  {{0.filename}}'.format(highest_size_digits)
         for file_info in biggest_files:
-            print tmpl % (file_info.size, file_info.filename)
+            print tmpl.format(file_info)
     else:
         print 'No files were found.'
 
