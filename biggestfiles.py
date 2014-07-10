@@ -4,15 +4,14 @@
 """List the biggest files.
 
 :Copyright: 2008-2014 Jochen Kupperschmidt
-:Date: 09-Jul-2014 (original release: 20-Apr-2008)
+:Date: 10-Jul-2014 (original release: 20-Apr-2008)
 :License: MIT
 """
 
 from argparse import ArgumentParser
 from collections import namedtuple
 from glob import iglob
-from heapq import heapify, heapreplace
-from itertools import islice
+from operator import attrgetter
 import os
 
 
@@ -27,27 +26,20 @@ def get_file_infos(path, pattern):
             yield FileInfo(filename, size)
 
 
-def identify_biggest_files(file_infos, limit):
-    """Determine the biggest files.
+def collect_biggest_files(file_infos, limit):
+    """Determine the biggest files."""
+    return collect_highest(file_infos, attrgetter('size'), limit)
 
-    ``files``
-        An iterable of ``FileInfo`` instances.
-    ``limit``
-        The maximum number of files to keep on the heap.  A lower
-        value might result in slightly lower memory usage.
+
+def collect_highest(iterable, sort_key, limit):
+    """Return the highest elements from the iterable, considering the
+    value returned by the sort key function ``sort_key``, but no more
+    than ``limit``.
     """
-    # Create the initial heap.
-    biggest = list(islice(file_infos, limit))
-    heapify(biggest)
+    def update_with_item(items, item):
+        return sorted(items + [item], key=sort_key, reverse=True)[:limit]
 
-    # Process remaining items.
-    for file_info in file_infos:
-        if file_info.size > biggest[0].size:
-            heapreplace(biggest, file_info)
-
-    # Sort and return the heap items.
-    biggest.sort(key=lambda file_info: file_info.size, reverse=True)
-    return list(biggest)
+    return reduce(update_with_item, iterable, [])
 
 
 def parse_args():
@@ -79,8 +71,7 @@ def main():
     args = parse_args()
 
     file_infos = get_file_infos(args.path, args.pattern)
-    biggest_files = identify_biggest_files(file_infos,
-                                           args.max_files)
+    biggest_files = collect_biggest_files(file_infos, args.max_files)
 
     # Display biggest files.
     if biggest_files:
