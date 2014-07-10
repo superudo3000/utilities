@@ -8,8 +8,13 @@
 :License: MIT
 """
 
+from __future__ import print_function
 from argparse import ArgumentParser
 from collections import namedtuple
+try:
+    reduce  # Python 2
+except NameError:
+    from functools import reduce  # Python 3
 from glob import iglob
 from operator import attrgetter
 import os
@@ -86,7 +91,7 @@ def main():
     biggest_files = collect_biggest_files(file_infos, args.max_files)
 
     for line in format_results(biggest_files):
-        print line
+        print(line)
 
 
 if __name__ == '__main__':
