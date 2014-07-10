@@ -26,18 +26,18 @@ Be aware that files will be included multiple times if you
 specify overlapping patterns and so the result might not be
 what you expected.
 
-Python 2.5 is required.
+Python 2.5 or later is required.
 
-:Copyright: 2005-2007 Jochen Kupperschmidt
-:Date: 12-Jul-2007
+:Copyright: 2005-2014 Jochen Kupperschmidt
+:Date: 10-Jul-2014 (original release: 29-Jan-2005)
 :License: MIT
 """
 
 from __future__ import with_statement
+from argparse import ArgumentParser
 from glob import iglob
 import locale
 locale.setlocale(locale.LC_ALL, '')
-from optparse import OptionParser
 import os
 
 
@@ -95,49 +95,52 @@ def display_results(stats):
 
 
 def parse_args():
-    parser = OptionParser(
-        usage='%prog [options] <path> [patterns]')
+    """Parse command line arguments."""
+    parser = ArgumentParser(description='Count lines.')
 
-    parser.add_option(
+    parser.add_argument(
+        'path',
+        metavar='PATH')
+
+    parser.add_argument(
+        'patterns',
+        metavar='PATTERN',
+        nargs='*')
+
+    parser.add_argument(
         '-a', '--absolute',
         dest='absolute',
         action='store_true',
         help='show absolute paths in details (overrides `-r`)')
 
-    parser.add_option(
+    parser.add_argument(
         '-d', '--details',
         dest='details',
         action='store_true',
         help='show details for each file')
 
-    parser.add_option(
+    parser.add_argument(
         '-r', '--relative',
         dest='relative',
         action='store_true',
         help='show relative paths in details')
 
-    opts, args = parser.parse_args()
-    if not args:
-        parser.print_help()
-        parser.exit()
-
-    return opts, args
+    return parser.parse_args()
 
 
 def main():
-    opts, args = parse_args()
-    path, patterns = args[0], args[1:]
+    args = parse_args()
 
     def callback(filename, line_count):
-        if opts.details:
-            path_len = len(path)
-            if opts.absolute:
+        if args.details:
+            path_len = len(args.path)
+            if args.absolute:
                 filename = os.path.abspath(filename)
-            elif opts.relative:
+            elif args.relative:
                 filename = '.' + filename[path_len:]
             print '%5d %s' % (line_count, filename)
 
-    stats = process_files(path, patterns, callback)
+    stats = process_files(args.path, args.patterns, callback)
     display_results(stats)
 
 
