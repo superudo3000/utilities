@@ -18,7 +18,7 @@ import os
 FileInfo = namedtuple('FileInfo', ['filename', 'size'])
 
 
-def get_file_infos(path, pattern):
+def collect_file_infos(path, pattern):
     """Yield information on each file along the path."""
     for root, dirs, files in os.walk(path):
         for filename in iglob(os.path.join(root, pattern)):
@@ -43,6 +43,7 @@ def collect_highest(iterable, sort_key, limit):
 
 
 def format_results(file_infos):
+    """Format the file information objects."""
     if file_infos:
         highest_size_digits = len(str(file_infos[0].size))
         tmpl = ' {{0.size:>{}d}}  {{0.filename}}'.format(highest_size_digits)
@@ -53,6 +54,7 @@ def format_results(file_infos):
 
 
 def parse_args():
+    """Parse command line arguments."""
     parser = ArgumentParser(description='List the biggest files.')
 
     parser.add_argument(
@@ -80,7 +82,7 @@ def parse_args():
 def main():
     args = parse_args()
 
-    file_infos = get_file_infos(args.path, args.pattern)
+    file_infos = collect_file_infos(args.path, args.pattern)
     biggest_files = collect_biggest_files(file_infos, args.max_files)
 
     for line in format_results(biggest_files):
