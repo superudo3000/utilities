@@ -81,17 +81,16 @@ def format_thousands(number):
     return locale.format('%d', number, True)
 
 
-def display_results(stats):
+def assemble_summary(stats):
     total = format_thousands(sum(stats.values()))
     key_width = max(len(k) for k in stats.keys() + ['total'])
     value_width = len(total)
-    format = '%%-%ds  %%%ds lines' % (key_width + 1, value_width)
-    print
+    template = '%%-%ds  %%%ds lines' % (key_width + 1, value_width)
     for key in sorted(stats.iterkeys()):
-        print format % (key + ':', format_thousands(stats[key]))
-    total_line = format % ('total:', total)
-    print '-' * len(total_line)
-    print total_line
+        yield template % (key + ':', format_thousands(stats[key]))
+    total_line = template % ('total:', total)
+    yield '-' * len(total_line)
+    yield total_line
 
 
 def parse_args():
@@ -141,7 +140,11 @@ def main():
             print '%5d %s' % (line_count, filename)
 
     stats = process_files(args.path, args.patterns, callback)
-    display_results(stats)
+
+    print
+    for line in assemble_summary(stats):
+        print line
+    print
 
 
 if __name__ == '__main__':
