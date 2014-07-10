@@ -16,19 +16,20 @@ try:
 except NameError:
     from functools import reduce  # Python 3
 from glob import iglob
+from pathlib import Path
 from operator import attrgetter
 import os
 
 
-FileInfo = namedtuple('FileInfo', ['filename', 'size'])
+FileInfo = namedtuple('FileInfo', ['path', 'size'])
 
 
-def collect_file_infos(path, pattern):
+def collect_file_infos(search_path, pattern):
     """Yield information on each file along the path."""
-    for root, dirs, files in os.walk(path):
-        for filename in iglob(os.path.join(root, pattern)):
-            size = os.path.getsize(filename)
-            yield FileInfo(filename, size)
+    for directory, subdirectories, files in os.walk(search_path):
+        for file_path in Path(directory).glob(pattern):
+            size = file_path.stat().st_size
+            yield FileInfo(file_path, size)
 
 
 def collect_biggest_files(file_infos, limit):
@@ -51,7 +52,7 @@ def format_results(file_infos):
     """Format the file information objects."""
     if file_infos:
         highest_size_digits = len(str(file_infos[0].size))
-        tmpl = ' {{0.size:>{}d}}  {{0.filename}}'.format(highest_size_digits)
+        tmpl = ' {{0.size:>{}d}}  {{0.path}}'.format(highest_size_digits)
         for file_info in file_infos:
             yield tmpl.format(file_info)
     else:
