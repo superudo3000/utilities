@@ -41,6 +41,7 @@ RE_SVN_ID = re.compile('''
     \ \$                            # Id string suffix
     .*
     ''', re.VERBOSE)
+
 RE_RCS_ID = re.compile('''
     .*
     \$Id:                           # Id string prefix
@@ -52,19 +53,21 @@ RE_RCS_ID = re.compile('''
     \ Exp\ \$                       # Id string suffix
     .*
     ''', re.VERBOSE)
+
 TYPES = {
     'svn': ('.svn', RE_SVN_ID),
     'cvs': ('CVS', RE_RCS_ID),
     'rcs': ('RCS', RE_RCS_ID),
-    }
+}
 
 
-def autodetect_type(dir):
+def autodetect_type(directory):
     """Try to autodetect the repository type by folder names."""
-    entries = os.listdir(dir)
-    for type in TYPES:
-        if TYPES[type][0] in entries:
-            return type
+    entries = os.listdir(directory)
+    for type_ in TYPES:
+        if TYPES[type_][0] in entries:
+            return type_
+
 
 def find_id_line(f, max_lines):
     """Try to find a line containing the id keyword ``$Id$``."""
@@ -82,16 +85,16 @@ class Id(object):
 
     def __cmp__(self, other):
         """Specify the sort order of ``Id`` objects."""
-        for attr in ('date', 'time', 'filename', 'version'):
+        for attr in ['date', 'time', 'filename', 'version']:
             result = cmp(getattr(self, attr), getattr(other, attr))
             if result != 0:
                 return result
         return 0
 
     @classmethod
-    def parse_id(cls, line, type):
+    def parse_id(cls, line, type_):
         """Parse id string with compiled pattern."""
-        m = TYPES[type][1].match(line)
+        m = TYPES[type_][1].match(line)
         if m is not None:
             return cls(**m.groupdict())
 
@@ -100,8 +103,8 @@ def scan_files(path, opts):
     """Scan through files, trying to find an id signature."""
     for root, dirs, files in os.walk(path):
         # Skip version control specific directories.
-        for type in TYPES:
-            vc_dir = TYPES[type][0]
+        for type_ in TYPES:
+            vc_dir = TYPES[type_][0]
             if vc_dir in dirs:
                 dirs.remove(vc_dir)
 
@@ -114,27 +117,39 @@ def scan_files(path, opts):
             with open(os.path.join(root, fname), 'rb') as f:
                 id_line = find_id_line(f, opts.num_lines)
             if id_line:
-                id = Id.parse_id(id_line, opts.type)
-                if id is not None:
-                    yield id
+                id_ = Id.parse_id(id_line, opts.type)
+                if id_ is not None:
+                    yield id_
 
-def main():
-    # Create option parser and define options.
+
+def parse_args():
     parser = OptionParser(
         usage='%prog [options] <directory>',
         version='Repository Sorter',
-        description=('Search files in a repository for ident strings'
-            ' and order the files by the date of their last change.')
+        description='Search files in a repository for ident strings'
+                    ' and order the files by the date of their last change.'
         )
-    parser.add_option('-t', '--type',
-        choices=TYPES.keys() + ['auto'], dest='type', default='auto',
+
+    parser.add_option(
+        '-t', '--type',
+        choices=TYPES.keys() + ['auto'],
+        dest='type',
+        default='auto',
         help='repository type: %s or auto (default)' % ', '.join(TYPES.keys())
         )
-    parser.add_option('-a', '--authors',
-        action='store_true', dest='authors', default=False,
+
+    parser.add_option(
+        '-a', '--authors',
+        action='store_true',
+        dest='authors',
+        default=False,
         help='display last authors')
-    parser.add_option('-n', '--num-lines',
-        dest='num_lines', type='int', default=10,
+
+    parser.add_option(
+        '-n', '--num-lines',
+        dest='num_lines',
+        type='int',
+        default=10,
         help='maximum number of lines to scan')
 
     # Process options and arguments.
@@ -148,9 +163,15 @@ def main():
         opts.type = autodetect_type(args[0])
         if opts.type is None:
             parser.exit(msg='Auto-detection of repository type failed.'
-                ' Please specify a type.\n')
+                            ' Please specify a type.\n')
         print('Auto-detection assumes this is a %s repository.\n'
-            % opts.type.upper())
+              % opts.type.upper())
+
+    return opts, args
+
+
+def main():
+    opts, args = parse_args()
 
     # Scan.
     ids = list(scan_files(args[0], opts))
@@ -160,8 +181,8 @@ def main():
     format = '%(date)s %(time)s %(filename)s'
     if opts.authors:
         format += ' [%(author)s]'
-    for id in ids:
-        print format % id.__dict__
+    for id_ in ids:
+        print format % id_.__dict__
 
 if __name__ == '__main__':
     main()
