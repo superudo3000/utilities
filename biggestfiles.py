@@ -51,10 +51,21 @@ def parse_args():
 
 def collect_file_infos(search_path, pattern):
     """Yield information on each file along the path."""
+    file_paths = collect_file_paths(search_path, pattern)
+    return map(create_file_info, file_paths)
+
+
+def collect_file_paths(search_path, pattern):
+    """List all files along the path."""
     for directory, subdirectories, files in os.walk(search_path):
         for file_path in Path(directory).glob(pattern):
-            size = file_path.stat().st_size
-            yield FileInfo(file_path, size)
+            yield file_path
+
+
+def create_file_info(file_path):
+    """Collect information on a file (i.e. its size)."""
+    size = file_path.stat().st_size
+    return FileInfo(file_path, size)
 
 
 def collect_biggest_files(file_infos, limit):
