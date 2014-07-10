@@ -15,7 +15,6 @@ try:
     reduce  # Python 2
 except NameError:
     from functools import reduce  # Python 3
-from glob import iglob
 from pathlib import Path
 from operator import attrgetter
 import os
