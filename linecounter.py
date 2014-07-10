@@ -46,6 +46,7 @@ def count_lines(filename):
     with open(filename, 'rb') as f:
         return sum(1 for line in f)
 
+
 def walk(top):
     """Walk file system tree and return directory names."""
     yield top
@@ -54,6 +55,7 @@ def walk(top):
         if os.path.isdir(name) and not os.path.islink(name):
             for dir in walk(name):
                 yield dir
+
 
 def match_filenames(path, patterns, callback):
     """Find files matching the pattern and count their lines."""
@@ -64,6 +66,7 @@ def match_filenames(path, patterns, callback):
                 callback(filename, line_count)
                 yield pattern, line_count
 
+
 def process_files(path, patterns, callback):
     """Collect line count statistics."""
     stats = dict.fromkeys(patterns, 0)
@@ -72,9 +75,11 @@ def process_files(path, patterns, callback):
         stats[pattern] += line_count
     return stats
 
+
 def format_thousands(number):
     """Format number with thousands separated."""
     return locale.format('%d', number, True)
+
 
 def display_results(stats):
     total = format_thousands(sum(stats.values()))
@@ -88,16 +93,26 @@ def display_results(stats):
     print '-' * len(total_line)
     print total_line
 
-if __name__ == '__main__':
+
+def parse_args():
     parser = OptionParser(
         usage='%prog [options] <path> [patterns]')
-    parser.add_option('-a', '--absolute', dest='absolute',
+
+    parser.add_option(
+        '-a', '--absolute',
+        dest='absolute',
         action='store_true',
         help='show absolute paths in details (overrides `-r`)')
-    parser.add_option('-d', '--details', dest='details',
+
+    parser.add_option(
+        '-d', '--details',
+        dest='details',
         action='store_true',
         help='show details for each file')
-    parser.add_option('-r', '--relative', dest='relative',
+
+    parser.add_option(
+        '-r', '--relative',
+        dest='relative',
         action='store_true',
         help='show relative paths in details')
 
@@ -105,6 +120,12 @@ if __name__ == '__main__':
     if not args:
         parser.print_help()
         parser.exit()
+
+    return opts, args
+
+
+def main():
+    opts, args = parse_args()
     path, patterns = args[0], args[1:]
 
     def callback(filename, line_count):
@@ -118,3 +139,7 @@ if __name__ == '__main__':
 
     stats = process_files(path, patterns, callback)
     display_results(stats)
+
+
+if __name__ == '__main__':
+    main()
