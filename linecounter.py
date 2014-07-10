@@ -53,15 +53,15 @@ def walk(top):
     for name in os.listdir(top):
         name = os.path.join(top, name)
         if os.path.isdir(name) and not os.path.islink(name):
-            for dir in walk(name):
-                yield dir
+            for directory in walk(name):
+                yield directory
 
 
 def match_filenames(path, patterns, callback):
     """Find files matching the pattern and count their lines."""
-    for dir in walk(path):
+    for directory in walk(path):
         for pattern in patterns:
-            for filename in iglob(os.path.join(dir, pattern)):
+            for filename in iglob(os.path.join(directory, pattern)):
                 line_count = count_lines(filename)
                 callback(filename, line_count)
                 yield pattern, line_count
