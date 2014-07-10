@@ -23,6 +23,32 @@ import os
 FileInfo = namedtuple('FileInfo', ['path', 'size'])
 
 
+def parse_args():
+    """Parse command line arguments."""
+    parser = ArgumentParser(description='List the biggest files.')
+
+    parser.add_argument(
+        'path',
+        metavar='PATH')
+
+    parser.add_argument(
+        '-m', '--max-files',
+        dest='max_files',
+        type=int,
+        default=10,
+        help='maximum number of files to show (default: 10)')
+
+    parser.add_argument(
+        '-p', '--pattern',
+        dest='pattern',
+        default='*',
+        help='a pattern to narrow down the search, e.g. "*.txt"\n'
+             ' NOTE: The pattern might need to be escaped, possibly '
+             'using quotes or backslashes, depending on your shell.')
+
+    return parser.parse_args()
+
+
 def collect_file_infos(search_path, pattern):
     """Yield information on each file along the path."""
     for directory, subdirectories, files in os.walk(search_path):
@@ -56,32 +82,6 @@ def format_results(file_infos):
             yield tmpl.format(file_info)
     else:
         yield 'No files were found.'
-
-
-def parse_args():
-    """Parse command line arguments."""
-    parser = ArgumentParser(description='List the biggest files.')
-
-    parser.add_argument(
-        'path',
-        metavar='PATH')
-
-    parser.add_argument(
-        '-m', '--max-files',
-        dest='max_files',
-        type=int,
-        default=10,
-        help='maximum number of files to show (default: 10)')
-
-    parser.add_argument(
-        '-p', '--pattern',
-        dest='pattern',
-        default='*',
-        help='a pattern to narrow down the search, e.g. "*.txt"\n'
-             ' NOTE: The pattern might need to be escaped, possibly '
-             'using quotes or backslashes, depending on your shell.')
-
-    return parser.parse_args()
 
 
 def main():
