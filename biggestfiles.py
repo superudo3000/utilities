@@ -42,6 +42,16 @@ def collect_highest(iterable, sort_key, limit):
     return reduce(update_with_item, iterable, [])
 
 
+def format_results(file_infos):
+    if file_infos:
+        highest_size_digits = len(str(file_infos[0].size))
+        tmpl = ' {{0.size:>{}d}}  {{0.filename}}'.format(highest_size_digits)
+        for file_info in file_infos:
+            yield tmpl.format(file_info)
+    else:
+        yield 'No files were found.'
+
+
 def parse_args():
     parser = ArgumentParser(description='List the biggest files.')
 
@@ -73,14 +83,8 @@ def main():
     file_infos = get_file_infos(args.path, args.pattern)
     biggest_files = collect_biggest_files(file_infos, args.max_files)
 
-    # Display biggest files.
-    if biggest_files:
-        highest_size_digits = len(str(biggest_files[0].size))
-        tmpl = ' {{0.size:>{}d}}  {{0.filename}}'.format(highest_size_digits)
-        for file_info in biggest_files:
-            print tmpl.format(file_info)
-    else:
-        print 'No files were found.'
+    for line in format_results(biggest_files):
+        print line
 
 
 if __name__ == '__main__':
