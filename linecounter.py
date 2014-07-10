@@ -26,14 +26,14 @@ Be aware that files will be included multiple times if you
 specify overlapping patterns and so the result might not be
 what you expected.
 
-Python 2.5 or later is required.
+Python 2.6 or later is required.
 
 :Copyright: 2005-2014 Jochen Kupperschmidt
 :Date: 10-Jul-2014 (original release: 29-Jan-2005)
 :License: MIT
 """
 
-from __future__ import with_statement
+from __future__ import print_function
 from argparse import ArgumentParser
 from glob import iglob
 import locale
@@ -83,10 +83,10 @@ def format_thousands(number):
 
 def assemble_summary(stats):
     total = format_thousands(sum(stats.values()))
-    key_width = max(len(k) for k in stats.keys() + ['total'])
+    key_width = max(len(k) for k in list(stats.keys()) + ['total'])
     value_width = len(total)
     template = '%%-%ds  %%%ds lines' % (key_width + 1, value_width)
-    for key in sorted(stats.iterkeys()):
+    for key in sorted(stats.keys()):
         yield template % (key + ':', format_thousands(stats[key]))
     total_line = template % ('total:', total)
     yield '-' * len(total_line)
@@ -137,14 +137,14 @@ def main():
                 filename = os.path.abspath(filename)
             elif args.relative:
                 filename = '.' + filename[path_len:]
-            print '%5d %s' % (line_count, filename)
+            print('%5d %s' % (line_count, filename))
 
     stats = process_files(args.path, args.patterns, callback)
 
-    print
+    print()
     for line in assemble_summary(stats):
-        print line
-    print
+        print(line)
+    print()
 
 
 if __name__ == '__main__':
