@@ -23,8 +23,8 @@ a minute; not counting the time needed to navigate through the web interface.
 .. _XML:    http://www.w3.org/XML/
 .. _HTTP:   http://tools.ietf.org/html/rfc2616
 
-:Copyright: 2008-2014 Jochen Kupperschmidt
-:Date: 05-Jul-2014 (original release: 04-Apr-2008)
+:Copyright: 2008-2015 Jochen Kupperschmidt
+:Date: 10-Jun-2015 (original release: 04-Apr-2008)
 :License: MIT
 """
 
