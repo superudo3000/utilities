@@ -37,7 +37,7 @@ import socket
 DEFAULT_HOST = 'fritz.box'
 DEFAULT_PORT = 49000
 
-URL_PATH = '/upnp/control/WANIPConn1'
+URL_PATH = '/igdupnp/control/WANIPConn1'
 
 
 def reconnect(host, port, debug=False):
