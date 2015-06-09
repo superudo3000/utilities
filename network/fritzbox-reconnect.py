@@ -58,7 +58,7 @@ def create_http_request(host, port):
         'Host: {0}:{1:d}'.format(host, port),
         'SoapAction: urn:schemas-upnp-org:service:WANIPConnection:1#ForceTermination',
         'Content-Type: text/xml; charset="utf-8"',
-        'Content-Length: {0:d}'.format(len(body)),
+        'Content-Length: {:d}'.format(len(body)),
         '',
         body,
     ])
@@ -83,7 +83,7 @@ def parse_args():
         '--host',
         dest='host',
         default=DEFAULT_HOST,
-        help='the host to send the HTTP request to [default: {:s}]' \
+        help='the host to send the HTTP request to [default: {}]' \
              .format(DEFAULT_HOST),
         metavar='HOST')
 
