@@ -29,11 +29,16 @@ a minute; not counting the time needed to navigate through the web interface.
 """
 
 from __future__ import print_function
+import argparse
 from contextlib import closing
 import socket
 
 
-def reconnect(host='fritz.box', port=49000, debug=False):
+DEFAULT_HOST = 'fritz.box'
+DEFAULT_PORT = 49000
+
+
+def reconnect(host, port, debug=False):
     """Connect to the box and submit SOAP data via HTTP."""
     request_data = create_http_request(host, port)
 
@@ -70,5 +75,37 @@ def create_http_body():
     ])
 
 
+def parse_args():
+    """Setup and apply the command line arguments parser."""
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        '--host',
+        dest='host',
+        default=DEFAULT_HOST,
+        help='the host to send the HTTP request to [default: {:s}]' \
+             .format(DEFAULT_HOST),
+        metavar='HOST')
+
+    parser.add_argument(
+        '--port',
+        dest='port',
+        type=int,
+        default=DEFAULT_PORT,
+        help='the port to send the HTTP request to [default: {:d}]' \
+             .format(DEFAULT_PORT),
+        metavar='PORT')
+
+    parser.add_argument(
+        '--debug',
+        dest='debug',
+        action='store_true',
+        default=False,
+        help='debug mode')
+
+    return parser.parse_args()
+
+
 if __name__ == '__main__':
-    reconnect()
+    args = parse_args()
+    reconnect(host=args.host, port=args.port, debug=args.debug)
