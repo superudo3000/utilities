@@ -37,6 +37,8 @@ import socket
 DEFAULT_HOST = 'fritz.box'
 DEFAULT_PORT = 49000
 
+URL_PATH = '/upnp/control/WANIPConn1'
+
 
 def reconnect(host, port, debug=False):
     """Connect to the box and submit SOAP data via HTTP."""
@@ -54,7 +56,7 @@ def create_http_request(host, port):
     body = create_http_body()
 
     return '\r\n'.join([
-        'POST /upnp/control/WANIPConn1 HTTP/1.1',
+        'POST {} HTTP/1.1'.format(URL_PATH),
         'Host: {0}:{1:d}'.format(host, port),
         'SoapAction: urn:schemas-upnp-org:service:WANIPConnection:1#ForceTermination',
         'Content-Type: text/xml; charset="utf-8"',
