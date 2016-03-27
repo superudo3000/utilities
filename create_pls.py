@@ -14,9 +14,10 @@ memory.
 
 __ http://forums.winamp.com/showthread.php?threadid=65772
 
-:Copyright: 2007 Jochen Kupperschmidt
-:Date: 09-Feb-2007
+:Copyright: 2007-2016 Jochen Kupperschmidt
+:Date: 2016-03-28 (original release: 09-Feb-2007)
 :License: MIT
+:Website: http://homework.nwsnet.de/releases/1a02/#create-pls-playlists
 """
 
 from argparse import ArgumentParser
