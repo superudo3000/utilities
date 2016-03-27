@@ -24,11 +24,13 @@ from sys import argv, exit, stdout
 
 PATTERN = re.compile('\.(mp3|ogg)$', re.I)
 
+
 def find_files(path):
     """Return all matching files beneath the path."""
     for root, dirs, files in os.walk(os.path.abspath(path)):
         for fn in ifilter(PATTERN.search, files):
             yield os.path.join(root, fn)
+
 
 def create_playlist(filenames):
     """Create a PLS playlist from filenames."""
@@ -42,16 +44,25 @@ def create_playlist(filenames):
         'Length{number:d}=-1\n\n')
     for filename in filenames:
         number += 1
-        title = os.path.splitext(os.path.basename(filename))[0]
-        yield entry.format(**{
-            'number': number,
-            'file': filename,
-            'title': title,
-        })
+        track_entry = create_track_entry(number, filename)
+
+        yield entry.format(**track_entry)
 
     yield (
         'NumberOfEntries=%d\n'
         'Version=2\n') % number
+
+
+def create_track_entry(number, filename):
+    """Create a track entry."""
+    title = os.path.splitext(os.path.basename(filename))[0]
+
+    return {
+        'number': number,
+        'file': filename,
+        'title': title,
+    }
+
 
 if __name__ == '__main__':
     if len(argv) != 2:
