@@ -21,10 +21,6 @@ Requires Python_ 2.7+ or 3.3+.
 :Website: http://homework.nwsnet.de/releases/9577/#find-ip-address-for-mac-address
 """
 
-try:
-    from future_builtins import filter
-except ImportError:
-    pass  # Neither available nor necessary on Python 3.
 import subprocess
 import xml.etree.ElementTree as ET
 
