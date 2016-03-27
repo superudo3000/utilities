@@ -33,24 +33,25 @@ def find_files(path):
 def create_playlist(filenames):
     """Create a PLS playlist from filenames."""
     yield '[playlist]\n\n'
-    num = 0
+
+    number = 0
 
     entry = (
         'File{number:d}={file}\n'
         'Title{number:d}={title}\n'
         'Length{number:d}=-1\n\n')
     for filename in filenames:
-        num += 1
+        number += 1
         title = os.path.splitext(os.path.basename(filename))[0]
         yield entry.format(**{
-            'number': num,
+            'number': number,
             'file': filename,
             'title': title,
         })
 
     yield (
         'NumberOfEntries=%d\n'
-        'Version=2\n') % num
+        'Version=2\n') % number
 
 if __name__ == '__main__':
     if len(argv) != 2:
