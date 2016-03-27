@@ -15,9 +15,10 @@ Requires Python_ 2.7+ or 3.3+.
 .. _Nmap: http://nmap.org/
 .. _Python: http://python.org/
 
-:Copyright: 2014 `Jochen Kupperschmidt <http://homework.nwsnet.de/>`_
-:Date: 05-Jul-2014 (original release: 25-Jan-2014)
+:Copyright: 2014-2016 `Jochen Kupperschmidt
+:Date: 27-Mar-2016 (original release: 25-Jan-2014)
 :License: MIT
+:Website: http://homework.nwsnet.de/releases/9577/#find-ip-address-for-mac-address
 """
 
 try:
