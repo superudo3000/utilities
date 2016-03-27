@@ -17,7 +17,10 @@ __ http://forums.winamp.com/showthread.php?threadid=65772
 """
 
 from argparse import ArgumentParser
-from itertools import ifilter
+try:
+    from itertools import ifilter as filter  # Python 2
+except ImportError:
+    pass
 import os.path
 import re
 from sys import stdout
@@ -37,7 +40,7 @@ def parse_args():
 def find_files(path):
     """Return all matching files beneath the path."""
     for root, dirs, files in os.walk(os.path.abspath(path)):
-        for fn in ifilter(PATTERN.search, files):
+        for fn in filter(PATTERN.search, files):
             yield os.path.join(root, fn)
 
 
@@ -76,4 +79,4 @@ def create_track_entry(number, filename):
 if __name__ == '__main__':
     args = parse_args()
     filenames = find_files(args.path)
-    map(stdout.write, generate_playlist(filenames))
+    stdout.writelines(generate_playlist(filenames))
