@@ -16,13 +16,22 @@ __ http://forums.winamp.com/showthread.php?threadid=65772
 :License: MIT
 """
 
+from argparse import ArgumentParser
 from itertools import ifilter
 import os.path
 import re
-from sys import argv, exit, stdout
+from sys import stdout
 
 
 PATTERN = re.compile('\.(mp3|ogg)$', re.I)
+
+
+def parse_args():
+    """Parse command line arguments."""
+    parser = ArgumentParser()
+    parser.add_argument('path')
+
+    return parser.parse_args()
 
 
 def find_files(path):
@@ -65,8 +74,6 @@ def create_track_entry(number, filename):
 
 
 if __name__ == '__main__':
-    if len(argv) != 2:
-        exit('Usage: %s <path to music files>' % os.path.basename(argv[0]))
-
-    filenames = find_files(argv[1])
+    args = parse_args()
+    filenames = find_files(args.path)
     map(stdout.write, create_playlist(filenames))
