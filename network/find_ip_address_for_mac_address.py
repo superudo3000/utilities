@@ -45,8 +45,15 @@ def find_ip_address_for_mac_address(xml, mac_address):
     MAC address, and return that host's IP address.
     """
     host_elems = ET.fromstring(xml).iter('host')
-    host_elem = next(filter(host_has_mac_address, host_elems))
+    host_elem = find_host_with_mac_address(host_elems)
     return get_ip_address(host_elem)
+
+
+def find_host_with_mac_address(host_elems):
+    """Return the first host element that contains the MAC address."""
+    for host_elem in host_elems:
+        if host_has_mac_address(host_elem):
+            return host_elem
 
 
 def host_has_mac_address(host_elem):
