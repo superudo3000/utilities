@@ -44,9 +44,9 @@ def find_ip_address_for_mac_address(xml, mac_address):
     """Parse Nmap's XML output, find the host element with the given
     MAC address, and return that host's IP address.
     """
-    hosts = ET.fromstring(xml).iter('host')
-    host = next(filter(host_has_mac_address, hosts))
-    return get_ip_address(host)
+    host_elems = ET.fromstring(xml).iter('host')
+    host_elem = next(filter(host_has_mac_address, host_elems))
+    return get_ip_address(host_elem)
 
 
 def host_has_mac_address(host_elem):
