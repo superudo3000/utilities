@@ -61,8 +61,8 @@ def generate_playlist(filenames):
         yield entry.format(**track_entry)
 
     yield (
-        'NumberOfEntries=%d\n'
-        'Version=2\n') % number
+        'NumberOfEntries={:d}\n'
+        'Version=2\n').format(number)
 
 
 def create_track_entry(number, filename):
