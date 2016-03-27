@@ -41,8 +41,8 @@ def find_files(path):
             yield os.path.join(root, fn)
 
 
-def create_playlist(filenames):
-    """Create a PLS playlist from filenames."""
+def generate_playlist(filenames):
+    """Generate a PLS playlist from filenames."""
     yield '[playlist]\n\n'
 
     number = 0
@@ -76,4 +76,4 @@ def create_track_entry(number, filename):
 if __name__ == '__main__':
     args = parse_args()
     filenames = find_files(args.path)
-    map(stdout.write, create_playlist(filenames))
+    map(stdout.write, generate_playlist(filenames))
