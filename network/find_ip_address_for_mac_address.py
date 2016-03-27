@@ -54,8 +54,13 @@ def find_host_with_mac_address(host_elems, mac_address):
 
 def host_has_mac_address(host_elem, mac_address):
     """Return true if the host has the given MAC address."""
-    mac_address_found = find_address_of_type(host_elem, 'mac')
+    mac_address_found = find_mac_address(host_elem)
     return mac_address_found.lower() == mac_address.lower()
+
+
+def find_mac_address(host_elem):
+    """Return the host's MAC address."""
+    return find_address_of_type(host_elem, 'mac')
 
 
 def find_ip_address(host_elem):
