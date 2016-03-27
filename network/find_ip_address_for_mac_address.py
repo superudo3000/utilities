@@ -38,11 +38,13 @@ def scan_for_hosts(ip_range):
 
 def find_ip_address_for_mac_address(xml, mac_address):
     """Parse Nmap's XML output, find the host element with the given
-    MAC address, and return that host's IP address.
+    MAC address, and return that host's IP address (or `None` if no
+    match was found).
     """
     host_elems = ET.fromstring(xml).iter('host')
     host_elem = find_host_with_mac_address(host_elems, mac_address)
-    return find_ip_address(host_elem)
+    if host_elem is not None:
+        return find_ip_address(host_elem)
 
 
 def find_host_with_mac_address(host_elems, mac_address):
@@ -55,7 +57,10 @@ def find_host_with_mac_address(host_elems, mac_address):
 def host_has_mac_address(host_elem, wanted_mac_address):
     """Return true if the host has the given MAC address."""
     found_mac_address = find_mac_address(host_elem)
-    return found_mac_address.lower() == wanted_mac_address.lower()
+    return (
+        found_mac_address is not None and
+        found_mac_address.lower() == wanted_mac_address.lower()
+    )
 
 
 def find_mac_address(host_elem):
@@ -84,5 +89,9 @@ if __name__ == '__main__':
     xml = scan_for_hosts(ip_range)
     ip_address = find_ip_address_for_mac_address(xml, mac_address)
 
-    print('Found IP address {} for MAC address {}.'
-          .format(ip_address, mac_address))
+    if ip_address:
+        print('Found IP address {} for MAC address {}.'
+              .format(ip_address, mac_address))
+    else:
+        print('No IP address found for MAC address {}.'
+              .format(mac_address))
