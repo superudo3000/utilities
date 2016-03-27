@@ -52,10 +52,10 @@ def find_host_with_mac_address(host_elems, mac_address):
             return host_elem
 
 
-def host_has_mac_address(host_elem, mac_address):
+def host_has_mac_address(host_elem, wanted_mac_address):
     """Return true if the host has the given MAC address."""
-    mac_address_found = find_mac_address(host_elem)
-    return mac_address_found.lower() == mac_address.lower()
+    found_mac_address = find_mac_address(host_elem)
+    return found_mac_address.lower() == wanted_mac_address.lower()
 
 
 def find_mac_address(host_elem):
