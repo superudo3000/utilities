@@ -5,6 +5,8 @@
 
 Specify a path to be recursively searched for music files.
 
+Requires Python 3.3 and the `pathlib` module, or Python 3.4+.
+
 According to an `unofficial PLS format specification`__, the attribute
 ``NumberOfEntries`` can be placed *after* all entries.  This allows to
 iterate through filenames without keeping details for each entry in
@@ -19,12 +21,6 @@ __ http://forums.winamp.com/showthread.php?threadid=65772
 
 from argparse import ArgumentParser
 from itertools import count
-try:
-    # Python 2
-    from itertools import ifilter as filter
-    from itertools import izip as zip
-except ImportError:
-    pass
 import os.path
 from pathlib import Path
 import re
