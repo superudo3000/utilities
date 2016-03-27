@@ -64,10 +64,12 @@ def get_ip_address(host_elem):
 
 
 def get_address_of_type(host_elem, type_):
-    """Return the host's address of the given type."""
-    return host_elem \
-        .find('./address[@addrtype="{}"]'.format(type_)) \
-        .get('addr')
+    """Return the host's address of the given type, or `None` if there
+    is no address element of that type.
+    """
+    address_elem = host_elem.find('./address[@addrtype="{}"]'.format(type_))
+    if address_elem is not None:
+        return address_elem.get('addr')
 
 
 if __name__ == '__main__':
