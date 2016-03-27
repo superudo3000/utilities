@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Create ``.pls`` playlists from music filenames.
+"""Create a ``.pls`` playlist from music filenames.
 
 Specify a path to be recursively searched for music files.
 
 According to an `unofficial PLS format specification`__, the attribute
-``NumberOfEntries`` can be placed *after* all entries.  This allows to iterate
-through filenames without keeping details for each entry in memory.
+``NumberOfEntries`` can be placed *after* all entries.  This allows to
+iterate through filenames without keeping details for each entry in
+memory.
 
 __ http://forums.winamp.com/showthread.php?threadid=65772
 
