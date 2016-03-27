@@ -17,8 +17,11 @@ __ http://forums.winamp.com/showthread.php?threadid=65772
 """
 
 from argparse import ArgumentParser
+from itertools import count
 try:
-    from itertools import ifilter as filter  # Python 2
+    # Python 2
+    from itertools import ifilter as filter
+    from itertools import izip as zip
 except ImportError:
     pass
 import os.path
@@ -48,21 +51,27 @@ def generate_playlist(filenames):
     """Generate a PLS playlist from filenames."""
     yield '[playlist]\n\n'
 
-    number = 0
+    total = 0
 
-    entry = (
+    entry_template = (
         'File{number:d}={file}\n'
         'Title{number:d}={title}\n'
         'Length{number:d}=-1\n\n')
-    for filename in filenames:
-        number += 1
-        track_entry = create_track_entry(number, filename)
 
-        yield entry.format(**track_entry)
+    for track_entry in generate_track_entries(filenames):
+        total += 1
+        yield entry_template.format(**track_entry)
 
     yield (
         'NumberOfEntries={:d}\n'
-        'Version=2\n').format(number)
+        'Version=2\n').format(total)
+
+
+def generate_track_entries(filenames, start_number=1):
+    """Generate track entries."""
+    numbers = count(start_number)
+    for number, filename in zip(numbers, filenames):
+        yield create_track_entry(number, filename)
 
 
 def create_track_entry(number, filename):
