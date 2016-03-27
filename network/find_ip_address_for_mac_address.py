@@ -28,10 +28,6 @@ import subprocess
 import xml.etree.ElementTree as ET
 
 
-MAC_ADDRESS = '00:33:66:99:cc:ff'
-IP_RANGE = '192.168.1.1-255'
-
-
 def scan_for_hosts(ip_range):
     """Scan the given IP address range using Nmap and return the result
     in XML format.
@@ -75,7 +71,11 @@ def get_address_of_type(host_elem, type_):
 
 
 if __name__ == '__main__':
-    xml = scan_for_hosts(IP_RANGE)
-    ip_address = find_ip_address_for_mac_address(xml, MAC_ADDRESS)
+    mac_address = '00:33:66:99:cc:ff'
+    ip_range = '192.168.1.1-255'
+
+    xml = scan_for_hosts(ip_range)
+    ip_address = find_ip_address_for_mac_address(xml, mac_address)
+
     print('Found IP address {} for MAC address {}.'
-          .format(ip_address, MAC_ADDRESS))
+          .format(ip_address, mac_address))
