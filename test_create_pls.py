@@ -2,7 +2,7 @@
 
 import unittest
 
-from create_pls import create_playlist
+from create_pls import generate_playlist
 
 
 class PlaylistCreationTest(unittest.TestCase):
@@ -16,7 +16,7 @@ NumberOfEntries=0
 Version=2
 '''
 
-        self.assertPlaylistCreation(filenames, expected)
+        self.assertPlaylistGeneration(filenames, expected)
 
     def test_single_file(self):
         filenames = [
@@ -33,7 +33,7 @@ NumberOfEntries=1
 Version=2
 '''
 
-        self.assertPlaylistCreation(filenames, expected)
+        self.assertPlaylistGeneration(filenames, expected)
 
     def test_multiple_files(self):
         filenames = [
@@ -60,10 +60,10 @@ NumberOfEntries=3
 Version=2
 '''
 
-        self.assertPlaylistCreation(filenames, expected)
+        self.assertPlaylistGeneration(filenames, expected)
 
-    def assertPlaylistCreation(self, filenames, expected):
-        actual = create_playlist(filenames)
+    def assertPlaylistGeneration(self, filenames, expected):
+        actual = generate_playlist(filenames)
         actual_joined = ''.join(actual)
         self.assertEqual(actual_joined, expected)
 
