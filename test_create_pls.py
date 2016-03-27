@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from pathlib import Path
 import unittest
 
 from create_pls import generate_playlist
@@ -8,7 +9,8 @@ from create_pls import generate_playlist
 class PlaylistCreationTest(unittest.TestCase):
 
     def test_no_files(self):
-        filenames = []
+        paths = self.to_paths()
+
         expected = '''\
 [playlist]
 
@@ -16,12 +18,13 @@ NumberOfEntries=0
 Version=2
 '''
 
-        self.assertPlaylistGeneration(filenames, expected)
+        self.assertPlaylistGeneration(paths, expected)
 
     def test_single_file(self):
-        filenames = [
+        paths = self.to_paths(
             'Artist Name - Song Title.mp3',
-        ]
+        )
+
         expected = '''\
 [playlist]
 
@@ -33,14 +36,15 @@ NumberOfEntries=1
 Version=2
 '''
 
-        self.assertPlaylistGeneration(filenames, expected)
+        self.assertPlaylistGeneration(paths, expected)
 
     def test_multiple_files(self):
-        filenames = [
+        paths = self.to_paths(
             'Foo Man - Foo Song.mp3',
             'Bar Band - Bar Song.ogg',
             'DJ Hipster - Chillout Mix.ogg',
-        ]
+        )
+
         expected = '''\
 [playlist]
 
@@ -60,10 +64,13 @@ NumberOfEntries=3
 Version=2
 '''
 
-        self.assertPlaylistGeneration(filenames, expected)
+        self.assertPlaylistGeneration(paths, expected)
 
-    def assertPlaylistGeneration(self, filenames, expected):
-        actual = generate_playlist(filenames)
+    def to_paths(self, *filenames):
+        yield from (Path(fn) for fn in filenames)
+
+    def assertPlaylistGeneration(self, path, expected):
+        actual = generate_playlist(path)
         actual_joined = ''.join(actual)
         self.assertEqual(actual_joined, expected)
 

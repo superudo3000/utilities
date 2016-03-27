@@ -25,6 +25,7 @@ try:
 except ImportError:
     pass
 import os.path
+from pathlib import Path
 import re
 from sys import stdout
 
@@ -35,16 +36,17 @@ PATTERN = re.compile('\.(mp3|ogg)$', re.I)
 def parse_args():
     """Parse command line arguments."""
     parser = ArgumentParser()
-    parser.add_argument('path')
+    parser.add_argument('path', type=Path)
 
     return parser.parse_args()
 
 
 def find_files(path):
     """Return all matching files beneath the path."""
-    for root, dirs, files in os.walk(os.path.abspath(path)):
+    for root, dirs, files in os.walk(str(path)):
         for fn in filter(PATTERN.search, files):
-            yield os.path.join(root, fn)
+            filename = os.path.join(root, fn)
+            yield Path(filename)
 
 
 def generate_playlist(filenames):
@@ -74,18 +76,18 @@ def generate_track_entries(filenames, start_number=1):
         yield create_track_entry(number, filename)
 
 
-def create_track_entry(number, filename):
+def create_track_entry(number, path):
     """Create a track entry."""
-    title = os.path.splitext(os.path.basename(filename))[0]
+    title = path.stem
 
     return {
         'number': number,
-        'file': filename,
+        'file': path,
         'title': title,
     }
 
 
 if __name__ == '__main__':
     args = parse_args()
-    filenames = find_files(args.path)
-    stdout.writelines(generate_playlist(filenames))
+    paths = find_files(args.path)
+    stdout.writelines(generate_playlist(paths))
