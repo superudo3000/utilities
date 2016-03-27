@@ -10,7 +10,7 @@ address assigned via DHCP) on the local network.
 Calls Nmap_ to ping hosts and return their MAC addresses (requires root
 privileges).
 
-Requires Python_ 2.7 or 3.3.
+Requires Python_ 2.7+ or 3.3+.
 
 .. _Nmap: http://nmap.org/
 .. _Python: http://python.org/
