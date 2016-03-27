@@ -36,13 +36,17 @@ def create_playlist(filenames):
     num = 0
 
     entry = (
-        'File%d=%s\n'
-        'Title%d=%s\n'
-        'Length%d=-1\n\n')
+        'File{number:d}={file}\n'
+        'Title{number:d}={title}\n'
+        'Length{number:d}=-1\n\n')
     for filename in filenames:
         num += 1
         title = os.path.splitext(os.path.basename(filename))[0]
-        yield entry % (num, filename, num, title, num)
+        yield entry.format(**{
+            'number': num,
+            'file': filename,
+            'title': title,
+        })
 
     yield (
         'NumberOfEntries=%d\n'
