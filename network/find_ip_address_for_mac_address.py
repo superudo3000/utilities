@@ -90,8 +90,8 @@ if __name__ == '__main__':
     ip_address = find_ip_address_for_mac_address(xml, mac_address)
 
     if ip_address:
-        print('Found IP address {} for MAC address {}.'
-              .format(ip_address, mac_address))
+        print('Found IP address {} for MAC address {} in IP address range {}.'
+              .format(ip_address, mac_address, ip_range))
     else:
-        print('No IP address found for MAC address {}.'
-              .format(mac_address))
+        print('No IP address found for MAC address {} in IP address range {}.'
+              .format(mac_address, ip_range))
