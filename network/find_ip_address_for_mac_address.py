@@ -42,7 +42,7 @@ def find_ip_address_for_mac_address(xml, mac_address):
     """
     host_elems = ET.fromstring(xml).iter('host')
     host_elem = find_host_with_mac_address(host_elems, mac_address)
-    return get_ip_address(host_elem)
+    return find_ip_address(host_elem)
 
 
 def find_host_with_mac_address(host_elems, mac_address):
@@ -54,16 +54,16 @@ def find_host_with_mac_address(host_elems, mac_address):
 
 def host_has_mac_address(host_elem, mac_address):
     """Return true if the host has the given MAC address."""
-    mac_address_found = get_address_of_type(host_elem, 'mac')
+    mac_address_found = find_address_of_type(host_elem, 'mac')
     return mac_address_found.lower() == mac_address.lower()
 
 
-def get_ip_address(host_elem):
+def find_ip_address(host_elem):
     """Return the host's IP address."""
-    return get_address_of_type(host_elem, 'ipv4')
+    return find_address_of_type(host_elem, 'ipv4')
 
 
-def get_address_of_type(host_elem, type_):
+def find_address_of_type(host_elem, type_):
     """Return the host's address of the given type, or `None` if there
     is no address element of that type.
     """
