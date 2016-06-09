@@ -1,1 +1,1 @@
-Various tiny utilities (as seen on http://homework.nwsnet.de/).
+Various tiny utilities (some as seen on http://homework.nwsnet.de/).
