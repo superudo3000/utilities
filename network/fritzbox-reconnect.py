@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """Instruct an AVM FRITZ!Box via UPnP_ to reconnect.
@@ -42,7 +42,7 @@ URL_PATH = '/igdupnp/control/WANIPConn1'
 
 def reconnect(host, port, debug=False):
     """Connect to the box and submit SOAP data via HTTP."""
-    request_data = create_http_request(host, port)
+    request_data = str.encode(create_http_request(host, port))
 
     with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
         s.connect((host, port))
